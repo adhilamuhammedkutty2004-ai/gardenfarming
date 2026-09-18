@@ -1,0 +1,127 @@
+{% load i18n static %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
+<head>
+<title>{% block title %}{{ title }} | Farming Abosed Admin{% endblock %}</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{% static 'admin/css/smart_garden_admin.css' %}">
+{% block extrastyle %}{% endblock %}
+{% block extrahead %}{% endblock %}
+</head>
+<body class="{% block bodyclass %}{% endblock %}">
+
+<div id="container">
+  <!-- LEFT SIDEBAR -->
+  <aside class="fa-sidebar" id="faSidebar">
+    <div class="fa-sidebar-header">
+      <div class="fa-sidebar-logo">🌱</div>
+      <div class="fa-brand-info">
+        <h2>Farming Abosed</h2>
+        <p>Fresh From Farm To You</p>
+      </div>
+    </div>
+
+    <nav class="fa-nav-menu">
+      <a href="{% url 'admin:index' %}" class="fa-nav-item {% if request.path == '/admin/' %}active{% endif %}">
+        <span class="fa-icon">🏠</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="{% url 'admin:garden_plant_changelist' %}" class="fa-nav-item {% if 'garden/plant' in request.path %}active{% endif %}">
+        <span class="fa-icon">📦</span>
+        <span>Products</span>
+        <span class="chevron">▾</span>
+      </a>
+      <a href="{% url 'admin:garden_gardentask_changelist' %}" class="fa-nav-item {% if 'garden/gardentask' in request.path %}active{% endif %}">
+        <span class="fa-icon">🛒</span>
+        <span>Orders</span>
+      </a>
+      <a href="{% url 'admin:auth_user_changelist' %}" class="fa-nav-item {% if 'auth/user' in request.path %}active{% endif %}">
+        <span class="fa-icon">👥</span>
+        <span>Users</span>
+      </a>
+      <a href="{% url 'admin:garden_garden_changelist' %}" class="fa-nav-item {% if 'garden/garden/' in request.path %}active{% endif %}">
+        <span class="fa-icon">🚜</span>
+        <span>Farmers</span>
+      </a>
+      <a href="{% url 'admin:garden_disease_changelist' %}" class="fa-nav-item {% if 'garden/disease' in request.path or 'garden/fertilizer' in request.path %}active{% endif %}">
+        <span class="fa-icon">▦</span>
+        <span>Categories</span>
+      </a>
+      <a href="{% url 'admin:garden_recommendation_changelist' %}" class="fa-nav-item {% if 'garden/recommendation' in request.path %}active{% endif %}">
+        <span class="fa-icon">⭐</span>
+        <span>Reviews</span>
+      </a>
+      <a href="/reports/" class="fa-nav-item">
+        <span class="fa-icon">📊</span>
+        <span>Reports</span>
+      </a>
+      <a href="{% url 'admin:index' %}" class="fa-nav-item">
+        <span class="fa-icon">⚙️</span>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="fa-sidebar-footer">
+      <div class="fa-sprout-art">🌱</div>
+      <h4>Support Local Farmers</h4>
+      <p>Grow a Greener Future</p>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="fa-main-wrapper">
+    <!-- TOP NAVBAR -->
+    <header class="fa-topbar">
+      <div class="fa-topbar-left">
+        <button class="fa-menu-toggle" id="menuToggle" aria-label="Toggle Navigation">☰</button>
+      </div>
+
+      <div class="fa-topbar-right">
+        <button class="fa-notif-btn" title="Notifications">
+          🔔
+          <span class="fa-notif-badge">1</span>
+        </button>
+
+        {% if user.is_authenticated %}
+        <div class="fa-user-profile" id="userMenuBtn">
+          <div class="fa-user-avatar">
+            {{ user.username|slice:":1"|upper }}
+          </div>
+          <div class="fa-user-meta">
+            <span class="fa-user-name">{{ user.username|capfirst }}</span>
+            <span class="fa-user-role">{% if user.is_superuser %}Super Admin{% else %}Staff{% endif %}</span>
+          </div>
+          <a href="{% url 'admin:logout' %}" title="Log out" style="color:#ef4444; margin-left:8px; text-decoration:none; font-size:12px; font-weight:600;">Log out</a>
+        </div>
+        {% endif %}
+      </div>
+    </header>
+
+    <!-- CONTENT BODY -->
+    <main class="fa-content">
+      {% block messages %}
+        {% if messages %}
+          <ul class="messagelist" style="margin-bottom: 20px; list-style:none; padding:0;">
+            {% for message in messages %}
+              <li class="{{ message.tags }}" style="padding:12px 18px; border-radius:8px; margin-bottom:10px; background:#dcfce7; color:#15803d; font-weight:600;">{{ message|capfirst }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endblock %}
+
+      {% block content %}
+        <div id="content-main">
+          {{ content }}
+        </div>
+      {% endblock %}
+    </main>
+  </div>
+</div>
+
+<script>
+  document.getElementById('menuToggle')?.addEventListener('click', function() {
+    document.getElementById('faSidebar')?.classList.toggle('open');
+  });
+</script>
+</body>
+</html>

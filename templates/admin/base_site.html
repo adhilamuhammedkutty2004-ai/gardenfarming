@@ -1,1 +1,10 @@
-{% extends "admin/base.html" %}{% load static %}{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'admin/css/smart_garden_admin.css' %}">{% endblock %}{% block branding %}<h1 id="site-name"><a href="{% url 'admin:index' %}">🌿 Smart Garden Administration</a></h1>{% endblock %}
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Farming Abosed Admin | Grow a Greener Future{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">🌱 Farming Abosed Administration</a></h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

@@ -1,1 +1,300 @@
-{% extends "admin/base_site.html" %}{% block content %}<section class="sg-admin-hero"><div><p>SMART GARDEN CONTROL CENTER</p><h1>Garden administration</h1><span>Manage your garden knowledge base and monitor activity in one place.</span></div><div class="sg-leaf">🌿</div></section><section class="sg-metrics"><article><b>{{ garden_admin_metrics.users }}</b><span>Users</span></article><article><b>{{ garden_admin_metrics.gardens }}</b><span>Gardens</span></article><article><b>{{ garden_admin_metrics.growing }}</b><span>Plants growing</span></article><article><b>{{ garden_admin_metrics.tasks }}</b><span>Open tasks</span></article></section><section class="sg-tools"><h2>Quick management</h2><div><a href="{% url 'admin:garden_plant_changelist' %}">🌱 Plant library</a><a href="{% url 'admin:garden_disease_changelist' %}">🍃 Disease advice</a><a href="{% url 'admin:garden_fertilizer_changelist' %}">🧪 Fertilizers</a><a href="{% url 'admin:garden_recommendation_changelist' %}">✨ Recommendations</a><a href="{% url 'admin:garden_gardentask_changelist' %}">✓ Garden tasks</a><a href="{% url 'admin:auth_user_changelist' %}">👤 Users</a></div></section><section class="sg-models"><h2>All administration areas</h2>{% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}</section>{% endblock %}
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block content %}
+<div class="fa-dashboard-view">
+
+  <!-- DASHBOARD HEADER -->
+  <div class="fa-dash-header">
+    <div class="fa-dash-title">
+      <h1>Welcome, {{ user.first_name|default:user.username|capfirst }}</h1>
+      <p>Here's what's happening with Farming Abosed today.</p>
+    </div>
+    <div class="fa-date-pill">
+      <span>{{ dashboard_data.today_date }}</span>
+      <span>📅</span>
+    </div>
+  </div>
+
+  <!-- 4 STATS CARDS -->
+  <div class="fa-metrics-grid">
+    <!-- Card 1: Total Products -->
+    <div class="fa-stat-card">
+      <div class="fa-stat-icon-wrap green">🌱</div>
+      <div class="fa-stat-details">
+        <div class="fa-stat-label">Total Products</div>
+        <div class="fa-stat-value">{{ dashboard_data.stats.products.value }}</div>
+        <div class="fa-stat-trend green">
+          ↑ 12% <span>vs last month</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Total Orders -->
+    <div class="fa-stat-card">
+      <div class="fa-stat-icon-wrap blue">🛒</div>
+      <div class="fa-stat-details">
+        <div class="fa-stat-label">Total Orders</div>
+        <div class="fa-stat-value">{{ dashboard_data.stats.orders.value }}</div>
+        <div class="fa-stat-trend green">
+          ↑ 18% <span>vs last month</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: Total Users -->
+    <div class="fa-stat-card">
+      <div class="fa-stat-icon-wrap purple">👥</div>
+      <div class="fa-stat-details">
+        <div class="fa-stat-label">Total Users</div>
+        <div class="fa-stat-value">{{ dashboard_data.stats.users.value }}</div>
+        <div class="fa-stat-trend green">
+          ↑ 9% <span>vs last month</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4: Total Farmers -->
+    <div class="fa-stat-card">
+      <div class="fa-stat-icon-wrap orange">🚜</div>
+      <div class="fa-stat-details">
+        <div class="fa-stat-label">Total Farmers</div>
+        <div class="fa-stat-value">{{ dashboard_data.stats.farmers.value }}</div>
+        <div class="fa-stat-trend green">
+          ↑ 7% <span>vs last month</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MIDDLE SECTION: CHARTS & WIDGETS -->
+  <div class="fa-middle-grid">
+    <!-- Sales Overview Line Chart -->
+    <div class="fa-card">
+      <div class="fa-card-header">
+        <h3 class="fa-card-title">Sales Overview</h3>
+        <select class="fa-pill-select" aria-label="Filter timeline">
+          <option>Last 7 Days ▾</option>
+          <option>Last 30 Days</option>
+          <option>This Year</option>
+        </select>
+      </div>
+      <div class="fa-chart-container">
+        <svg class="fa-chart-svg" viewBox="0 0 500 200" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="greenGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#16a34a" stop-opacity="0.35" />
+              <stop offset="100%" stop-color="#22c55e" stop-opacity="0.0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Grid Lines -->
+          <line x1="40" y1="20" x2="490" y2="20" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="3,3" />
+          <line x1="40" y1="60" x2="490" y2="60" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="3,3" />
+          <line x1="40" y1="100" x2="490" y2="100" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="3,3" />
+          <line x1="40" y1="140" x2="490" y2="140" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="3,3" />
+          <line x1="40" y1="180" x2="490" y2="180" stroke="#e2e8f0" stroke-width="1" />
+
+          <!-- Y-Axis Labels -->
+          <text x="5" y="24" font-size="10" fill="#94a3b8" font-family="sans-serif">2,000</text>
+          <text x="5" y="64" font-size="10" fill="#94a3b8" font-family="sans-serif">1,500</text>
+          <text x="5" y="104" font-size="10" fill="#94a3b8" font-family="sans-serif">1,000</text>
+          <text x="18" y="144" font-size="10" fill="#94a3b8" font-family="sans-serif">500</text>
+          <text x="28" y="184" font-size="10" fill="#94a3b8" font-family="sans-serif">0</text>
+
+          <!-- Area Gradient Fill -->
+          <polygon points="50,135 110,105 170,85 230,110 290,125 350,98 410,87 470,45 470,180 50,180" fill="url(#greenGradient)" />
+
+          <!-- Smooth Line -->
+          <polyline points="50,135 110,105 170,85 230,110 290,125 350,98 410,87 470,45" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+
+          <!-- Data Points -->
+          <circle cx="50" cy="135" r="4" fill="#ffffff" stroke="#16a34a" stroke-width="2" />
+          <circle cx="110" cy="105" r="4" fill="#ffffff" stroke="#16a34a" stroke-width="2" />
+          <circle cx="170" cy="85" r="4" fill="#ffffff" stroke="#16a34a" stroke-width="2" />
+          <circle cx="230" cy="110" r="4" fill="#ffffff" stroke="#16a34a" stroke-width="2" />
+          <circle cx="290" cy="125" r="4" fill="#ffffff" stroke="#16a34a" stroke-width="2" />
+          <circle cx="350" cy="98" r="4" fill="#ffffff" stroke="#16a34a" stroke-width="2" />
+          <circle cx="410" cy="87" r="4" fill="#ffffff" stroke="#16a34a" stroke-width="2" />
+          <circle cx="470" cy="45" r="4.5" fill="#16a34a" stroke="#ffffff" stroke-width="2" />
+
+          <!-- X-Axis Labels -->
+          <text x="40" y="196" font-size="10" fill="#94a3b8" font-family="sans-serif">Sep 3</text>
+          <text x="100" y="196" font-size="10" fill="#94a3b8" font-family="sans-serif">Sep 4</text>
+          <text x="160" y="196" font-size="10" fill="#94a3b8" font-family="sans-serif">Sep 5</text>
+          <text x="220" y="196" font-size="10" fill="#94a3b8" font-family="sans-serif">Sep 6</text>
+          <text x="280" y="196" font-size="10" fill="#94a3b8" font-family="sans-serif">Sep 7</text>
+          <text x="340" y="196" font-size="10" fill="#94a3b8" font-family="sans-serif">Sep 8</text>
+          <text x="400" y="196" font-size="10" fill="#94a3b8" font-family="sans-serif">Sep 9</text>
+          <text x="455" y="196" font-size="10" fill="#94a3b8" font-family="sans-serif">Sep 10</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Product Categories Donut Chart -->
+    <div class="fa-card">
+      <div class="fa-card-header">
+        <h3 class="fa-card-title">Product Categories</h3>
+      </div>
+      <div class="fa-donut-container">
+        <div class="fa-donut-wrap">
+          <svg viewBox="0 0 100 100" width="100%" height="100%" style="transform: rotate(-90deg);">
+            <!-- Slices: circumference = 2 * pi * 38 = ~238.76 -->
+            <!-- Vegetables: 27.4% -> 65.4 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#15803d" stroke-width="16" stroke-dasharray="65.4 173.3" stroke-dashoffset="0" />
+            <!-- Fruits: 21.8% -> 52.0 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#f59e0b" stroke-width="16" stroke-dasharray="52.0 186.7" stroke-dashoffset="-65.4" />
+            <!-- Spices: 15.3% -> 36.5 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#ea580c" stroke-width="16" stroke-dasharray="36.5 202.2" stroke-dashoffset="-117.4" />
+            <!-- Grains: 12.9% -> 30.8 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#8b5cf6" stroke-width="16" stroke-dasharray="30.8 207.9" stroke-dashoffset="-153.9" />
+            <!-- Others: 22.6% -> 54.0 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#3b82f6" stroke-width="16" stroke-dasharray="54.0 184.7" stroke-dashoffset="-184.7" />
+          </svg>
+          <div class="fa-donut-center">
+            <span>Total Products</span>
+            <b>{{ dashboard_data.categories_total }}</b>
+          </div>
+        </div>
+
+        <div class="fa-donut-legend">
+          {% for cat in dashboard_data.categories %}
+          <div class="fa-legend-item">
+            <div class="fa-legend-left">
+              <span class="fa-legend-dot" style="background: {{ cat.color }};"></span>
+              <span>{{ cat.name }}</span>
+            </div>
+            <span class="fa-legend-count">{{ cat.count }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Side Column Widgets: Quick Actions & Recent Users -->
+    <div class="fa-side-widgets">
+      <!-- Quick Actions -->
+      <div class="fa-card" style="padding:18px;">
+        <div class="fa-card-header" style="margin-bottom:12px;">
+          <h3 class="fa-card-title">
+            <span style="color:#15803d;">🌱</span> Quick Actions
+          </h3>
+        </div>
+        <div class="fa-actions-list">
+          <a href="{% url 'admin:garden_plant_add' %}" class="fa-action-btn">
+            <span class="fa-action-icon" style="background:#dcfce7; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#15803d; font-size:12px;">＋</span>
+            <span>Add New Product</span>
+          </a>
+          <a href="{% url 'admin:garden_gardentask_changelist' %}" class="fa-action-btn">
+            <span class="fa-action-icon">🛒</span>
+            <span>Manage Orders</span>
+          </a>
+          <a href="{% url 'admin:garden_garden_add' %}" class="fa-action-btn">
+            <span class="fa-action-icon">🚜</span>
+            <span>Add Farmer</span>
+          </a>
+          <a href="/reports/" class="fa-action-btn">
+            <span class="fa-action-icon">📊</span>
+            <span>View Reports</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Recent Users -->
+      <div class="fa-card" style="padding:18px;">
+        <div class="fa-card-header" style="margin-bottom:12px;">
+          <h3 class="fa-card-title">
+            <span style="color:#15803d;">👥</span> Recent Users
+          </h3>
+        </div>
+        <div class="fa-users-list">
+          {% for u in dashboard_data.recent_users %}
+          <div class="fa-user-row">
+            <div class="fa-avatar-sm" style="background: {{ u.bg }}; color: {{ u.fg }};">
+              {{ u.avatar }}
+            </div>
+            <div class="fa-user-info">
+              <div class="fa-user-name-text">{{ u.name }}</div>
+              <div class="fa-user-role-text">{{ u.role }}</div>
+            </div>
+            <div class="fa-user-time">{{ u.time }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="fa-card-footer-link">
+          <a href="{% url 'admin:auth_user_changelist' %}">View All Users →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM ROW: RECENT ORDERS TABLE & RECENT ACTIVITY FEED -->
+  <div class="fa-bottom-grid">
+    <!-- Recent Orders Table -->
+    <div class="fa-card">
+      <div class="fa-card-header">
+        <h3 class="fa-card-title">Recent Orders</h3>
+        <a href="{% url 'admin:garden_gardentask_changelist' %}" style="font-size:12.5px; font-weight:600; color:#15803d; text-decoration:none;">View All Orders →</a>
+      </div>
+      <div class="fa-table-wrap">
+        <table class="fa-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Products</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for o in dashboard_data.recent_orders %}
+            <tr>
+              <td class="fa-order-id">{{ o.id }}</td>
+              <td class="fa-customer-name">{{ o.customer }}</td>
+              <td>{{ o.products }}</td>
+              <td class="fa-amount">{{ o.amount }}</td>
+              <td>
+                <span class="badge-status {{ o.status_class }}">{{ o.status }}</span>
+              </td>
+              <td style="color:#64748b;">{{ o.date }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Activity Feed -->
+    <div class="fa-card">
+      <div class="fa-card-header">
+        <h3 class="fa-card-title">
+          <span style="color:#15803d;">🌱</span> Recent Activity
+        </h3>
+      </div>
+      <div class="fa-activity-list">
+        {% for act in dashboard_data.recent_activities %}
+        <div class="fa-activity-item">
+          <div class="fa-act-icon {{ act.color }}">
+            {% if act.icon == 'leaf' %}🌱{% elif act.icon == 'cart' %}🛒{% elif act.icon == 'tractor' %}🚜{% elif act.icon == 'edit' %}✏️{% else %}👤{% endif %}
+          </div>
+          <div class="fa-act-content">
+            <div class="fa-act-title">{{ act.title }}</div>
+            <div class="fa-act-desc">{{ act.desc }}</div>
+          </div>
+          <div class="fa-act-time">{{ act.time }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD FOOTER -->
+  <footer class="fa-footer">
+    <div>© 2025 Farming Abosed. All rights reserved.</div>
+    <div>Grow • Support • Sustain 🌿</div>
+  </footer>
+
+</div>
+{% endblock %}
